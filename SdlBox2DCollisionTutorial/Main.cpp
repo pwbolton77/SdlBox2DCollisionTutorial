@@ -65,13 +65,13 @@ b2Body* addRectToWorld(float x, float y, float width, float height, bool dynamic
    shape.SetAsBox(PixelsToMeters * width / 2, PixelsToMeters * height / 2);
 
    b2FixtureDef fixture_def;
-   fixture_def.shape = &shape;
+   fixture_def.shape = &shape;   // Note: "shape" is specifically documented to state that it will be cloned, so can be on stack.
    fixture_def.density = 1.0;
 
    body->CreateFixture(&fixture_def);
-   auto& user_data = body->GetUserData();
 
-   assert(sizeof(uintptr_t) == sizeof(&DynamicType));
+   auto& user_data = body->GetUserData();
+   assert(sizeof(uintptr_t) == sizeof(&DynamicType)); // Make sure that we can save a pointerto an int in a uintptr_t type.
 
    // #1 When a collision happens we need to know the type of the box/body, so save the type via a user data pointer
    if (dynamic_object)
